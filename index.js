@@ -6,30 +6,30 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const clientesConectados = {};
+
 app.get('/', (req, res) => {
   res.send('WebSocket with Express');
+});
+
+// Endpoint para obtener la lista de clientes conectados
+app.get('/clientes', (req, res) => {
+  const listaClientes = Object.keys(clientesConectados).map((idCliente) => {
+    return {
+      id: idCliente,
+    };
+  });
+
+  res.json(listaClientes);
 });
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado.');
 
   ws.on('message', (message) => {
-    try {
-      // Lógica de la base de datos que podría lanzar errores
-      // Simulamos un error para propósitos demostrativos
-      if (message === 'error') {
-        throw new Error('¡Este es un error simulado!');
-      }
-
-      console.log(`Mensaje recibido: ${message}`);
-
-      // Enviar un mensaje de vuelta al cliente
-      ws.send(`Servidor recibió tu mensaje: ${message}`);
-    } catch (error) {
-      // Manejar errores y enviar un mensaje de error al cliente
-      console.error('Error en el servidor:', error.message);
-      ws.send(`Error en el servidor: ${error.message}`);
-    }
+    const data = JSON.parse(message);
+    clientesConectados[data.id] = ws;
+    console.log(`Cliente conectado con ID: ${data.id}`);
   });
 
   ws.on('close', () => {
