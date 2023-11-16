@@ -8,6 +8,9 @@ const wss = new WebSocket.Server({ server });
 
 const clientesConectados = {};
 
+app.use(express.static('public'));
+// app.use('/static', express.static('public'));
+
 app.get('/', (req, res) => {
   res.send('WebSocket with Express');
 });
