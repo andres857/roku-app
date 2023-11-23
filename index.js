@@ -1,51 +1,31 @@
 const express = require('express');
 const http = require('http');
-const WebSocket = require('ws');
+const socketIo = require('socket.io');
+const cors = require('cors')
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
-const clientesConectados = {};
-
-app.use(express.static('public'));
-
-app.get('/', (req, res) => {
-  res.send('WebSocket with Express');
+// Configurar CORS para Socket.IO
+const io = socketIo(server, {
+  cors: {
+    origin: "http://127.0.0.1:5173", // Reemplaza con el origen de tu cliente
+    methods: ["GET", "POST"]
+  }
 });
 
-// Endpoint para obtener la lista de clientes conectados
-app.get('/clientes', (req, res) => {
-  const listaClientes = Object.keys(clientesConectados).map((idCliente) => {
-    return {
-      id: idCliente,
-    };
-  });
-  res.json(listaClientes);
-});
+app.use(cors());
 
-wss.on('connection', (ws) => {
-  console.log('Cliente conectado.');
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
 
-  ws.on('message', (message) => {
-    const data = JSON.parse(message);
-    clientesConectados[data.id] = ws;
-    console.log(`Cliente conectado con ID: ${data.id}`);
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado');
   });
 
-  ws.on('close', () => {
-    console.log('Cliente desconectado.');
-  });
-});
-
-// Middleware de manejo de errores
-app.use((err, req, res, next) => {
-  console.error('Error en Express:', err.message);
-  res.status(500).send('Error interno del servidor.');
+  // Más eventos y lógica aquí
 });
 
 const PORT = 5005;
-
 server.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
