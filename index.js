@@ -1,7 +1,8 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
-const cors = require('cors')
+const cors = require('cors');
+const router = require('./mediaplayers/route');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,8 @@ const io = socketIo(server, {
 });
 
 app.use(cors());
+app.use(express.json());
+app.use('/devices', router);
 
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
