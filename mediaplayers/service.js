@@ -30,6 +30,7 @@ const getAllDevices = async () => {
     throw error; // o retorna un valor por defecto, según tus necesidades
   }
 };
+
 const getDevices = async function(client){
     try {
         const allDevices = await getAllDevices();
@@ -42,6 +43,26 @@ const getDevices = async function(client){
     }
 }
 
+const getSubscripcions = async function(idDevice){
+  try {
+    const {data} = await axios.get(`http://3.129.105.109:8081/api/v4/subscriptions/${idDevice}`, {
+      headers: { 'Authorization': basicAuth }
+    });
+    const subscriptions = data.data.map( (subscription)=>{
+        return {
+            clientid: subscription.clientid,
+            topic: subscription.topic,
+        }
+    })
+    return subscriptions;
+  } catch (error) {
+    // Maneja el error como prefieras
+    console.error('Error al obtener las subscriptions:', error);
+    throw error; // o retorna un valor por defecto, según tus necesidades
+  }
+}
+
 module.exports = {
-  getDevices
+  getDevices,
+  getSubscripcions
 };

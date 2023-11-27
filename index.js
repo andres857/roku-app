@@ -16,7 +16,7 @@ const io = socketIo(server, {
 
 app.use(cors());
 app.use(express.json());
-app.use('/devices', router);
+app.use('/', router);
 
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
