@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const { getDevices,getSubscripcions } = require('./service'); // Asegúrate de que la ruta sea correcta
+import { Router } from 'express';
+import { getDevices, getSubscripcions } from './service.js';
+
+const router = Router();
 
 router.get('/devices', async function(req, res) {
   const client = req.query.client;
@@ -26,4 +27,6 @@ router.get('/subscriptions', async function(req, res) {
   }
 });
 
-module.exports = router;
+export {
+  router
+} 
