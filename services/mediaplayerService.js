@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import Client from '../models/client.model.js';
 
 // Tus credenciales para la autenticación básica
 const username = 'admin';
@@ -63,11 +62,7 @@ const getSubscripcions = async function(idDevice){
   }
 }
 
-// const create = async function (data){
-
-// }
-
 export {
   getDevices,
-  getSubscripcions
+  getSubscripcions,
 };

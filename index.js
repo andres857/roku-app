@@ -2,11 +2,22 @@ import express from 'express';
 import http from 'http';
 // import { Server as SocketIo } from 'socket.io';
 import cors from 'cors';
-import { router } from './mediaplayers/route.js';
+import { routerApi } from './routes/index.js';
+import { db } from './db/index.js'
 
+const PORT = process.env.PORT || 5005;
 
 const app = express();
 const server = http.createServer(app);
+
+// Conectar a la base de datos
+db.authenticate()
+  .then(() => {
+    console.log('Conexión a la base de datos establecida');
+  })
+  .catch(err => {
+    console.error('Error al conectarse a la base de datos:', err);
+  });
 
 // Configurar CORS para Socket.IO
 // const io = socketIo(server, {
@@ -18,7 +29,8 @@ const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
-app.use('/', router);
+
+routerApi(app);
 
 // io.on('connection', (socket) => {
 //   console.log('Cliente conectado');
@@ -30,7 +42,6 @@ app.use('/', router);
 //   // Más eventos y lógica aquí
 // });
 
-const PORT = 5005;
 server.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });

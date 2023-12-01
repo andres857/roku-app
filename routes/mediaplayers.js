@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getDevices, getSubscripcions } from './service.js';
+import { getDevices, getSubscripcions } from '../services/mediaplayerService.js';
 
 const router = Router();
 
-router.get('/devices', async function(req, res) {
+router.get('/', async function(req, res) {
   const client = req.query.client;
   console.log(client);
   try {
@@ -28,5 +28,5 @@ router.get('/subscriptions', async function(req, res) {
 });
 
 export {
-  router
-} 
+  router as mediaplayerRouter
+}
