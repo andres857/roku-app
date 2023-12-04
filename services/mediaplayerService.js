@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Mediaplayer } from '../models/mediaplayer.model.js';
 
 // Tus credenciales para la autenticación básica
 const username = 'admin';
@@ -7,7 +8,7 @@ const password = 'public';
 // Codifica las credenciales en base64 para la autenticación básica
 const basicAuth = 'Basic ' + Buffer.from(username + ':' + password).toString('base64');
 
-const getAllDevices = async () => {
+const getDevicesConnected = async () => {
   try {
     const {data} = await axios.get('http://3.129.105.109:8081/api/v4/clients', {
       headers: { 'Authorization': basicAuth }
@@ -31,7 +32,7 @@ const getAllDevices = async () => {
   }
 };
 
-const getDevices = async function(client){
+const getDevicesByClient = async function(client){
     try {
         const allDevices = await getAllDevices();
         const filterDevices = allDevices.filter( (device)=>{
@@ -62,7 +63,25 @@ const getSubscripcions = async function(idDevice){
   }
 }
 
+const create = async function( dataMediaPlayer ){
+
+  await Mediaplayer.sync();
+    try {
+      const created = await Mediaplayer.create({
+        channel_id: dataMediaPlayer.channel_id || null,
+        serial: dataMediaPlayer.serial,
+        status: dataMediaPlayer.status,
+        room_id: dataMediaPlayer.room_id,
+      });
+      return created;
+    } catch (error) {
+      console.error(error.message);
+    }
+}
+
 export {
-  getDevices,
+  getDevicesConnected,
+  getDevicesByClient,
   getSubscripcions,
+  create
 };

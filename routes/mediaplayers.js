@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getDevices, getSubscripcions } from '../services/mediaplayerService.js';
+import { create, getDevicesConnected , getDevicesByClient, getSubscripcions } from '../services/mediaplayerService.js';
 
 const router = Router();
 
@@ -7,7 +7,7 @@ router.get('/', async function(req, res) {
   const client = req.query.client;
   console.log(client);
   try {
-    const devices = await getDevices(client);
+    const devices = await getDevicesByClient(client);
     console.log(devices);
     res.json(devices);
   } catch (error) {
@@ -24,6 +24,22 @@ router.get('/subscriptions', async function(req, res) {
     res.json(subscripcions);
   } catch (error) {
     res.status(500).send('Error al obtener dispositivos');
+  }
+});
+
+router.post('/', async function(req, res) {
+  const data = req.body;
+  try {
+    const newMediaPlayer  = await create(data);
+    res.status(201).json({
+      message: "mediaPlayer Created",
+      mediaPlayer: newMediaPlayer
+  });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error creating mediaPlayer",
+      error: error.message
+    });
   }
 });
 

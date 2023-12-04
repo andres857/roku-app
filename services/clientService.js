@@ -14,18 +14,31 @@ const create = async function (data){
     }
 }
 
-const get = async function (){
+const getAll = async function (){
     const response = await Client.findAll({
-        attributes: [ 'client_name', 'client_abreviatura']
+        attributes: ['client_id', 'client_name', 'client_abreviatura']
     });
      const clients = response.map( client => {
       return {
+        id: client.client_id,
         name: client.client_name,
         alias: client.client_abreviatura
       }
      })
     console.log(clients);
     return clients;
+}
+
+const getById = async function (id){
+  const response = await Client.findByPk(id)
+  if (response === null){
+    console.log(' not found ');
+    return null;
+  }else{
+    const client = response.dataValues;
+    console.log(client);
+    return client;
+  }
 }
 
 const getIdByAlias = async function (alias){
@@ -43,8 +56,25 @@ const getIdByAlias = async function (alias){
   }
 }
 
+const getIdByName = async function (name){
+  const response = await Client.findOne({
+    where: {
+      client_name: name
+    }
+  })
+  if (response === null){
+    console.log(' not found ');
+    return null;
+  }else{
+    const client = response.dataValues.client_id;
+    return client;
+  }
+}
+
 export {
-    create,
-    get,
-    getIdByAlias
+  create,
+  getAll,
+  getIdByName,
+  getById,
+  getIdByAlias
 }

@@ -15,6 +15,36 @@ const create = async function (idClient, data){
     }
 }
 
+const getById = async function (id){
+  const response = await Location.findByPk(id)
+  if (response === null){
+    console.log(' not found ');
+    return null;
+  }else{
+    const location = response.dataValues;
+    console.log(location);
+    return location;
+  }
+}
+
+const getByIdClient = async function (id){
+  const response = await Location.findAll({
+    where:{
+      client_id: id
+    }
+  });
+  if (response === null){
+    console.log(' not found ');
+    return null;
+  }else{
+    const locations = response.map( location => location.dataValues);
+    console.log(locations);
+    return locations;
+  }
+}
+
 export {
     create,
+    getById,
+    getByIdClient
 }

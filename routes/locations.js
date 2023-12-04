@@ -1,53 +1,63 @@
 import { Router } from 'express';
-import { getIdByAlias } from '../services/clientService.js';
-import { create } from '../services/locationService.js';
+import { getIdByName } from '../services/clientService.js';
+import { create, getByIdClient, getById } from '../services/locationService.js';
+import {roomRouter} from './rooms.js';
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
-// router.get('/', async function(req, res) {  
-//   try {
-//     const clients  = await get();
-//     res.status(200).json({
-//       ok: true,
-//       status: 200,
-//       message: "Success",
-//       client: clients
-//   });
-//   } catch (error) {
-//     res.status(500).json({
-//       ok: false,
-//       status: 500,
-//       message: "Error getting clients",
-//       error: error.message
-//     });
-//   }
-// });
+//:clientId en tus rutas
+router.get('/', async function(req, res) {
+  console.log(req.params);
+  const id = req.params.clientID;
+  console.log(id);
+  try {
+    const locations  = await getByIdClient(id);
+    res.status(200).json({
+      message: "Success",
+      locations: locations
+  });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error getting location",
+      error: error.message
+    });
+  }
+});
+
+router.get('/:idLocation', async function(req, res) {
+  const id = req.params.idLocation;
+  try {
+    const location  = await getById(id);
+    res.status(200).json({
+      message: "Success",
+      location: location
+  });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error getting location",
+      error: error.message
+    });
+  }
+});
 
 router.post('/', async function(req, res) {
   const locationData = req.body;
   try {
-    // get id Client
-    const idClient = await getIdByAlias(locationData.alias);
-    console.log('**************');
-    console.log(idClient);
-    console.log('**************');
-
+    const idClient = await getIdByName(locationData.client);
     const created  = await create(idClient, locationData);
     res.status(201).json({
-      ok: true,
-      status: 201,
       message: "Location Created",
       client: created
   });
   } catch (error) {
     res.status(500).json({
-      ok: false,
-      status: 500,
       message: "Error creating Location",
       error: error.message
     });
   }
 });
+
+router.use('/:idLocation/rooms', roomRouter);
 
 export {
   router as locationRouter
